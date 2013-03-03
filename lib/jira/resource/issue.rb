@@ -31,21 +31,17 @@ module JIRA
 
       has_many :worklogs, :nested_under => ['fields','worklog']
 
-      def self.all(client)
-        response = client.get(client.options[:rest_base_path] + "/search")
+      def self.all(client, params = {})
+        url = client.options[:rest_base_path] + "/search"
+        response = client.post(url, params.to_json)
         json = parse_json(response.body)
         json['issues'].map do |issue|
           client.Issue.build(issue)
         end
       end
 
-      def self.jql(client, jql)
-        url = client.options[:rest_base_path] + "/search?jql=" + CGI.escape(jql)
-        response = client.get(url)
-        json = parse_json(response.body)
-        json['issues'].map do |issue|
-          client.Issue.build(issue)
-        end
+      def self.jql(client, jql, params = {})
+        all(client, params.merge(:jql => jql))
       end
 
       def respond_to?(method_name)

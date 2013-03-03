@@ -49,7 +49,7 @@ describe JIRA::Resource::Issue do
         stub_request(:get, site_url + "/jira/rest/api/2/search").
                     to_return(:status => 200, :body => get_mock_response('issue.json'))
       end
-      it_should_behave_like "a resource with a collection GET endpoint"
+      it_should_behave_like "a resource with a collection POST endpoint that retrieves items"
     end
     it_should_behave_like "a resource with a DELETE endpoint"
     it_should_behave_like "a resource with a POST endpoint"
@@ -87,7 +87,7 @@ describe JIRA::Resource::Issue do
           "key"=>"SAMPLEPROJECT-13"
         }
       }
-      it_should_behave_like "a resource with JQL inputs and a collection GET endpoint"
+      it_should_behave_like "a resource with JQL inputs and a collection POST endpoint"
     end
 
   end
