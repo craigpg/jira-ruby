@@ -111,6 +111,10 @@ module JIRA
       JIRA::Resource::VersionFactory.new(self)
     end
 
+    def Createmeta # :nodoc:
+      JIRA::Resource::CreatemetaFactory.new(self)
+    end
+
     # HTTP methods without a body
     def delete(path, headers = {})
       request(:delete, path, nil, merge_default_headers(headers))

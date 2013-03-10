@@ -26,6 +26,10 @@ describe JIRA::Resource::Project do
     describe "issues" do
 
       it "returns all the issues" do
+        stub_request(:post, site_url + "/jira/rest/api/2/search").
+          with(:body => {:jql => "project = SAMPLEPROJECT"}.to_json,
+               :headers => {'Accept'=>'application/json'}).
+               to_return(:status => 200, :body => get_mock_response('project/SAMPLEPROJECT.issues.json'))        
         stub_request(:get, site_url + "/jira/rest/api/2/search?jql=project='SAMPLEPROJECT'").
           to_return(:status => 200, :body => get_mock_response('project/SAMPLEPROJECT.issues.json'))
         subject = client.Project.build('key' => key)

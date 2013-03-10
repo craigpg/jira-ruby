@@ -16,12 +16,21 @@ module JIRA
       end
 
       # Returns all the issues for this project
-      def issues
-        response = client.get(client.options[:rest_base_path] + "/search?jql=project%3D'#{key}'")
-        json = self.class.parse_json(response.body)
-        json['issues'].map do |issue|
-          client.Issue.build(issue)
-        end
+      def issues(params = {})
+        params[:jql] = params.include?(:jql) ? "(#{params[:jql]}) AND (project = #{key})" : "project = #{key}"
+        client.Issue.all(params)
+      end
+
+      def fields_for_issuetype_by_name(issuetype_name)
+        {}.tap {|h| fields_for_issuetype(issuetype_name).each {|k,v| h[v['name']] = v.merge('fieldName' => k)}}
+      end
+
+      def fields_for_issuetype(issuetype_name)
+        (createmeta_for_issuetype(issuetype_name).first.issuetypes.first || {})['fields'] || {}
+      end
+      
+      def createmeta_for_issuetype(issuetype_name)
+        client.Createmeta.all(:issuetypeNames => issuetype_name, :projectKeys => key, :expand => 'projects.issuetypes.fields')
       end
 
     end

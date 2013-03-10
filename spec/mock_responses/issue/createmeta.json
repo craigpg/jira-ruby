@@ -1,0 +1,34 @@
+{
+    "expand": "projects",
+    "projects": [
+        {
+            "self": "http://localhost:2990/jira/rest/api/2/project/10000",
+            "id": "10000",
+            "key": "SAMPLEPROJECT",
+            "name": "SAMPLEPROJECT",
+            "avatarUrls": {
+                "16x16": "http://localhost:2990/jira/secure/projectavatar?size=small&pid=10000&avatarId=10011",
+                "48x48": "http://localhost:2990/jira/secure/projectavatar?pid=10000&avatarId=10011"
+            },
+            "issuetypes": [
+                {
+                    "self": "http://localhost:2990/jira/rest/api/2/issueType/1",
+                    "id": "1",
+                    "description": "An error in the code",
+                    "iconUrl": "http://localhost:2990/jira/images/icons/issuetypes/bug.png",
+                    "name": "Bug",
+                    "subtask": false,
+                    "fields": {
+                        "issuetype": {
+                            "required": true,
+                            "name": "Issue Type",
+                            "operations": [
+                                "set"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
