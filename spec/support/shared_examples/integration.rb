@@ -81,29 +81,14 @@ shared_examples "a resource with a collection GET endpoint" do
 
 end
 
-shared_examples "a resource with a collection POST endpoint that retrieves items" do
+shared_examples "a resource with a collection POST endpoint that retrieves pages of items" do
 
   it "should get the collection" do
     stub_request(:post, site_url + client.options[:rest_base_path] + '/search').
-                 with(:body => {}.to_json,
+                 with(:body => paging_params.to_json,
                       :headers => {'Accept'=>'application/json'}).
                  to_return(:status => 200, :body => get_mock_from_path(:get))
     collection = build_receiver.all
-    collection.length.should == expected_collection_length
-
-    first = collection.first
-    first.should have_attributes(expected_attributes)
-  end
-
-end
-shared_examples "a resource with JQL inputs and a collection POST endpoint" do
-
-  it "should get the collection" do
-    stub_request(:post, site_url + client.options[:rest_base_path] + '/search').
-                 with(:body => {:jql => jql_query_string}.to_json,
-                      :headers => {'Accept'=>'application/json'}).
-                 to_return(:status => 200, :body => get_mock_response('issue.json'))
-    collection = build_receiver.jql(jql_query_string)
     collection.length.should == expected_collection_length
 
     first = collection.first

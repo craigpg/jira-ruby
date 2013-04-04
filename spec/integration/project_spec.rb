@@ -27,7 +27,7 @@ describe JIRA::Resource::Project do
 
       it "returns all the issues" do
         stub_request(:post, site_url + "/jira/rest/api/2/search").
-          with(:body => {:jql => "project = SAMPLEPROJECT"}.to_json,
+          with(:body => {:jql => "project = SAMPLEPROJECT", :maxResults => JIRA::Resource::Issue::DEFAULT_MAX_RESULTS, :startAt => 0}.to_json,
                :headers => {'Accept'=>'application/json'}).
                to_return(:status => 200, :body => get_mock_response('project/SAMPLEPROJECT.issues.json'))        
         stub_request(:get, site_url + "/jira/rest/api/2/search?jql=project='SAMPLEPROJECT'").

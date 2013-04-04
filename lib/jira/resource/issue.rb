@@ -8,6 +8,10 @@ module JIRA
 
     class Issue < JIRA::Base
 
+      # pagination constants
+      PAGE_SIZE            = 500
+      DEFAULT_MAX_RESULTS  = 50
+
       has_one :reporter,  :class => JIRA::Resource::User,
                           :nested_under => 'fields'
       has_one :assignee,  :class => JIRA::Resource::User,
@@ -31,12 +35,30 @@ module JIRA
 
       has_many :worklogs, :nested_under => ['fields','worklog']
 
-      def self.all(client, params = {})
+      def self.get(client, params = {})
         url = client.options[:rest_base_path] + "/search"
-        response = client.post(url, params.to_json)
-        json = parse_json(response.body)
+        client.post(url, params.to_json)
+      end
+
+      def self.get_issues(client, params = {})
+        json = parse_json(get(client, params).body)
         json['issues'].map do |issue|
           client.Issue.build(issue)
+        end
+      end
+
+      def self.all(client, params = {})
+        max_results = params[:maxResults] || DEFAULT_MAX_RESULTS
+        start_at = params[:startAt] || 0
+        page_size = [max_results, PAGE_SIZE].min
+        [].tap do |results|
+          while (results.size < max_results) do
+            results_page = get_issues(client, params.merge(:maxResults => [page_size, max_results - results.size].min,
+                                                           :startAt    => start_at + results.size))
+            break if results_page.empty?
+            results.concat(results_page)
+            break if results_page.size < page_size
+          end
         end
       end
 
